@@ -1,0 +1,6 @@
+import pandas as pd
+
+def meltTable(report: pd.DataFrame) -> pd.DataFrame:
+    ans = report.melt(id_vars=["product"])
+    ans.rename(columns={"variable":"quarter", "value":"sales"}, inplace=True)
+    return ans
