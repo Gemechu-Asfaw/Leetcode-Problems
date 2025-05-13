@@ -1,42 +1,40 @@
 class Solution {
 public:
-    int myAtoi(string s) {
-
-        // INT_MAX : 2147483647
-        // E.g.    : 2147483648
-        
-        int i = 0, n = s.size(), ans = 0, sign = 1;
-        bool isSymbolUsed = false;
-
-        while (i<n && s[i]==' '){
-            i++;
-        }
-
-        while (i<n){
-            char character = s[i];
-            if (character == '-' || character == '+'){
-                if (isSymbolUsed){
-                    break;
-                } else if (character == '-'){
+    int solve(string s, int ans, int index, int sign, bool isSymbolUsed){
+        if (s[index]=='\0' || s[index]=='.' || s[index]==' ' || (isSymbolUsed && (s[index]=='+' || s[index]=='-'))){
+            return ans;
+        } else {
+            if (s[index] == '-' || s[index] == '+'){
+                if (s[index] == '-'){
                     sign = -1;
                 }
                 isSymbolUsed = true;
-            } else if (character>='0' && character<='9'){
-                int digit = character - '0';
-                if ((ans > INT_MAX/10) || (ans==INT_MAX/10 && INT_MAX%10<=digit)){
+            } else if (s[index]>='0' && s[index]<='9'){
+                int digit = s[index]-'0';
+                isSymbolUsed = true;
+                if ((ans > INT_MAX/10) || (ans == INT_MAX/10 && digit%10>=INT_MAX%10)){
                     return INT_MAX;
-                } else if ((ans < INT_MIN/10) || (ans==INT_MIN/10 && (~INT_MIN%10+1)%10<=digit)){
+                } else if ((ans < INT_MIN/10) || (ans == INT_MIN/10 && digit%10>=(~INT_MIN%10+1)%10)){
                     return INT_MIN;
                 } else {
                     ans = ans*10 + sign*digit;
                 }
-                isSymbolUsed = true;
             } else {
-                break;
+                return ans;
             }
-            i++;
+            index++;
+            return solve(s, ans, index, sign, isSymbolUsed);
+        }
+    }
+
+    int myAtoi(string s) {
+        int ans = 0, sign = 1, index = 0;
+        bool isSymbolUsed = false;
+
+        while (s[index]!='\0' && s[index]==' '){
+            index++;
         }
 
-        return ans;
+        return solve(s, ans, index, sign, isSymbolUsed);
     }
 };
